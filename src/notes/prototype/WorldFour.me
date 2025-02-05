@@ -1,0 +1,19 @@
+World Four is both similar to and different from world's one, two and three.
+
+When displaying a Level.jsx for World Four, behavior is identical.
+
+But in GameplayMenu.jsx:
+
+The buttons for Worlds one/two/three are displayed by default.
+The button for World four is not displayed by default, and its display has two modes in the TopBar.jsx in GameplayMenu.jsx:
+
+When fewer than all three of world's one/two/three have been completed:
+Show an empty star at left of TopBar.jsx in GameplayMenu.jsx at the appropriate index to symbolize that the worlds has not yet been completed.
+Show a filled star at left of TopBar.jsx in GameplayMenu.jsx at the appropriate index to symbolize that the worlds has not yet been completed.
+For example, if worlds one and three are complete and world two is not complete, in GameplayMenu, the left of TopBar should show: filled star, unfilled star, filled star.
+
+When all three of world's one/two/three have been completed:
+The three filled stars become a button that when clicked take the user to a level of world four, where, again, behavior is identical to worlds one/two/three.
+
+When worlds one/two/three are completed, that information gets passed back to GameplayMenu, I believe through localStorage, to display a star over that world's button in GameplayMenu.
+Similarly, when world four is completed, that information needs to get passed back to GameplayMenu, I believe through localStorage, to display a star over that world's button in the TopBar in GameplayMenu.

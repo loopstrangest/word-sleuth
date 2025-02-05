@@ -1,0 +1,15 @@
+Update the menu layout based on the provided image.
+
+Note that there will be GROUPS of SETS of LEVELS. The first group is called "tutorial", but the letters in the groupTitleBox are spaced out on three lines: "tut", "or", "ial". The groupTitleBox is purely for display purposes.
+
+Please note that the space left and right of the groupTitleBox is space alloted for a conditional toNextGroup Triangle button on the right and a toPreviousGroup Triangle button on the left.
+
+Please note that stars are conditional, awarded upon completion of the level set.
+
+Please note that the letters in the groupTitleBox should be both horizontally and vertically centered.
+
+Please note that level set boxes have a dark border.
+
+When the final set of a group is completed, a right Triangle button will appear that when clicked, takes the user the next Group of Level Sets.
+
+The first two Groups are: Tutorial, Letters.

@@ -1,0 +1,86 @@
+.topbar-container {
+  width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  vertical-align: center;
+  margin-bottom: 16px;
+}
+
+.topbar-container .MuiButton-root {
+  padding: 0;
+}
+
+/* Remove hover and active background and shadow */
+.topbar-container .MuiButton-root:hover,
+.topbar-container .MuiButton-root:active,
+.topbar-container .MuiButton-root:focus {
+  background-color: transparent;
+  box-shadow: none;
+}
+
+.stars-container {
+  display: flex;
+  position: relative;
+  transition: none;
+}
+
+.star-stroke polygon {
+  fill: none;
+  stroke: var(--grayDark);
+}
+
+.star-filled polygon {
+  fill: var(--grayDark);
+  stroke: var(--grayDark);
+}
+
+.stars-completed {
+  border-radius: 8px;
+  background-color: var(--grayDark);
+}
+
+.stars-container.completed {
+  border: 2px solid var(--grayDark);
+  border-radius: 8px;
+}
+
+.stars-container.completed:hover {
+  background-color: var(--grayLight);
+  cursor: pointer;
+}
+
+/* Ensure the stars container has padding to display the border properly */
+.stars-container.completed {
+  padding: 0px;
+}
+
+/* Optional: Adjust cursor style if needed */
+.stars-container.completed:hover {
+  cursor: pointer;
+}
+
+.completed-star-world-four {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  height: 130%;
+  width: auto;
+  aspect-ratio: 1 / 1;
+  transform: translate(-50%, -50%);
+  opacity: 50%;
+  pointer-events: auto;
+  fill: var(--level-color-select);
+}
+
+svg {
+  vertical-align: middle;
+}
+
+.sound-low,
+.sound-high,
+.sound-off,
+.back-button {
+  cursor: pointer;
+}

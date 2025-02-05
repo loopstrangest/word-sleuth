@@ -1,0 +1,69 @@
+# About Word Sleuth
+
+I want to make a make a full-fledged game called Word Sleuth to be released on steam and itch.io for mac and windows. This is a word puzzle game with many levels and hidden rules. It's similar to the game Understand by Artless Games but with words instead of boxes and lines.
+
+I want to release an initial set of 21 levels as a web app prototype that I can expand upon for the full game, so it needs to be built with that in mind. I want to use Electron.js for this project. I have already set up a folder repository called word-sleuth.
+
+I am a web developer using a Mac laptop and VSCode with Cursor. I would like for this project to use MUI components. Please help me build the prototype from scratch.
+
+# Prototype Overview
+
+The page loads to a main menu with title and play button and light mode / dark mode button toggle and sound effect off / low / full toggle.
+
+When the user clicks play, they will see the gameplay menu.
+
+Information to track user progress is stored in local storage, but maybe we want a different data storage solution since this will be a full-fledged game not played in the browser.
+
+The 21 levels are split into three stages.
+
+# Gameplay Menu
+
+Initially, the user sees only a button with four shapes: triangle, circle, triangle, circle. Clicking this button takes the user to whatever level of stage one they left off on previously, or the first level of stage one by default.
+When stage two is unlocked, the user will see a second button on the gameplay menu with: square, empty space twice the width of the square, square. Clicking this button takes the user to whatever level of stage two they left off on previously, or the first level of stage two by default.
+When stage three is unlocked, the user will see a third button on the gameplay menu with: right pointing arrow above left pointing arrow. Clicking this button takes the user to whatever level of stage three they left off on previously, or the first level of stage three by default.
+
+A user completes a stage when they complete the final level of the stage. When that happens, the gameplay menu will then show a number of circles under the gameplay menu button corresponding to that world. These circles represent the maximum number of matching words across all levels in that world. The number of circles that are filled in for a world corresponds to the number of matching words the user found across all levels in that world.
+
+# World Layout
+
+A World consists of a series of levels. Each level takes up the full screen.
+
+# Level Layout
+
+Every level except the first in a world has a empty right pointing triangle button at the right side of the screen to take the user to the next level. Every level except the last in a world has an empty left pointing triangle button at the left side of the screen to take the user to the previous level. The last level in a world shows an empty star on the right instead of an empty right triangle.
+
+Every level has text. Users can click any number of words to highlight them. Below the text is a submit button. Below the submit button is a number of empty circles corresponding to the number of hidden rules for that world.
+
+# Level Function
+
+When a user submits a set of words, the circles corresponding to the hidden rules that the set of words obeys become filled. If all hidden rules are obeyed, all circles are filled, and the right (next level) triangle is filled, signifying that the level is complete.
+
+The last level shows, instead of the rule circles, one elongated ellipse. This level is harder because the user cannot see which rules have been followed with each submission. After each submission, this elongated ellipse either remains empty because at least one hidden rule was not followed, or it is filled because all hidden rules were followed, and this last level in the world is complete, and the star is filled, and the next world is unlocked!
+
+The game should programmatically know which rules have been followed when a rule set is submitted and update the page accordingly. It should also know the biggest possible word submission that follows all of the hidden rules.
+
+A user selects a word by clicking it. A user deselects a word by clicking that selected words. When the submit button is clicked, the set of selected words is evaluated.
+
+# World One
+
+World One has three hidden rules:
+
+1. Select at least two words.
+2. Each selected word must contain a string of two consonants and two vowels.
+3. Each selected word must contain a string of a consonant followed by a vowel followed by a consonant followed by a vowel.
+
+World One has seven levels. Here is the text corresponding to each level, in order:
+
+May love pour through our soul - weaving us together as one.
+May light flower in our heart - lending us the grace to transform all fear.
+May warmth radiate our belly - bringing prosperity to all.
+May purity shimmer in our bones - filling us with the light of the stars.
+May kindness resound in our voice - softening the way that lies ahead.
+May clarity shine through our mind - as we lie in the arms of the infinite.
+May solace abound in our life - touching all who we meet - bringing all beings into perfect union.
+
+For the first two levels, put dotted underlines under love, together, flower, and grace. This serves as a sort of implicit tutorial to suggest to the user what to do. These words are only selected and deselected when the user does so - they are not selected by default, only visually distinct.
+
+# TODO
+
+Please show me exactly how to build this prototype from scratch!

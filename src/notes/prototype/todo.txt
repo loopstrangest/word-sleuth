@@ -1,0 +1,21 @@
+Add transitions screens for main levels: four, repeat, surround
+
+**DONE**
+
+Fix sound bug
+
+Change green to: common letter with previous word, common letter with following word
+
+Spacebar to submit guess
+
+Click completed star to return to menu
+
+Mention in tutorial: rules are about letters, spacebar to submit guess, some levels have multiple solutions, I want feedback
+
+Revise all four tutorials to be five levels long. (3 w/ hints)
+
+Revise tutorial three to not talk about tutorial four
+
+Do not repeat answers in a tutorial set
+
+Fix tutorial square to always be a square.

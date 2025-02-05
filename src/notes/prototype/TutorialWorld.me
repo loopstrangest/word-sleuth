@@ -1,0 +1,15 @@
+The Tutorial World is a unique set of levels intended to help players who struggle to complete any of Worlds 1-4 by explicitly sharing some information about the game and providing easier levels to complete.
+
+The Tutorial World uses Level.jsx, which also has tutorialWordsTutorialWorld. The first two words of that variable are for the first level of Tutorial World, the last two words of that variable are for the second level of Tutorial World.
+
+Use tutorialWorldLevels in worldText.js. So the tutorial has four levels instead of the usual seven.
+
+Keeping track of whether this tutorial world is complete (it's star level is complete) should NOT affect anything in GameplayMenu.jsx nor anything related to the stars or the world 4 elements in TopBar.jsx, and should not affect the count of whether 0, 1, 2, 3, or 4, worlds are complete.
+
+We should still keep track of which tutorial level the user left on, which tutorial levels are complete as we do with the other worlds.
+
+Players will access this world with a Tutorial button on MainMenu.jsx between Play and Credits. When the user clicks bar from TopBar in a tutorial level, they are taken to the main menu.
+
+Fill out and implement tutorialWorldRules.js with the following two rules:
+1. Every selected word must include a letter a
+2. Every selected word must contain exactly two vowels (y is not a vowel)

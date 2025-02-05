@@ -1,0 +1,7 @@
+**This has been implemented.**
+
+To update the initial level sets, and the gameplay menu for the full version:
+
+Remove all code and files exclusively utilized by the main sets of levels. These include: GameplayMenu.jsx, WorldOneLogo, WorldTwoLogo, WorldThreeLogo, worldOneRules.js, worldFourRules.js... and so on. Please intuit what all code and files to remove.
+
+Remove the MainMenu tutorial button, and make the Play button go the TutorialMenu, which will be the new GameplayMenu (rename it to gameplay menu).

@@ -1,0 +1,152 @@
+.root-level {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+  height: calc(var(--vh) * 100);
+  padding: 0.667rem;
+  box-sizing: border-box;
+
+  /* Default world color variables (World One) */
+  --level-color-dark: var(--purpleDark);
+  --level-color-light: var(--purpleLight);
+  --level-color-select: var(--purpleSelect);
+}
+
+/* Position level-main-content between 15vh and 75vh by default */
+.level-main-content {
+  position: absolute;
+  top: calc(var(--vh) * 15);
+  left: 0.667rem;
+  right: 0.667rem;
+  height: calc(var(--vh) * 60); /* 15vh to 75vh = 60vh total */
+  max-width: 1200px;
+  display: flex;
+  flex-direction: row;
+  align-items: center; /* vertically center children */
+  justify-content: space-between; /* horizontally spread out children */
+  margin: 0 auto;
+}
+
+.level-footer-content {
+  position: absolute;
+  top: calc(var(--vh) * 80);
+  left: 0.667rem;
+  right: 0.667rem;
+  height: calc(var(--vh) * 15);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.level-text {
+  width: 100%;
+  max-width: 600px;
+  margin: 100px 100px;
+  text-align: center;
+  user-select: none;
+  font-family: inherit;
+}
+
+/* Base font size on smaller displays */
+.MuiTypography-h5.level-text {
+  font-size: 24px;
+  margin: 0 5vw;
+}
+
+.level-rule-circles {
+  display: flex;
+  justify-content: center;
+}
+
+.level-circle {
+  display: inline-block;
+  width: 75px;
+  height: 75px;
+  border: 3px solid var(--level-color-dark);
+  border-radius: 50%;
+  margin-left: 20px;
+  margin-right: 20px;
+}
+
+.level-circle-filled {
+  background-color: var(--level-color-dark);
+}
+
+.word,
+.punctuation {
+  font-size: inherit;
+  color: var(--level-color-dark);
+}
+
+.word {
+  cursor: pointer;
+  padding: 1.5px;
+}
+
+.punctuation {
+  cursor: default;
+}
+
+.word-hint {
+  border-bottom: 2px dotted var(--level-color-dark);
+  margin-bottom: -2px;
+}
+
+.word-selected {
+  background-color: var(--level-color-select);
+  opacity: 1;
+  border-radius: 6px;
+  border-bottom: none;
+  margin-bottom: 0px;
+}
+
+.nav-icon {
+  width: 60px;
+  height: 60px;
+}
+
+button {
+  background-color: var(--purpleDark);
+  color: var(--purpleDark);
+}
+
+.punctuation {
+  color: var(--level-color-dark);
+}
+
+.level-ellipse {
+  width: 300px;
+  height: 75px;
+  border: 3px solid var(--level-color-dark);
+  border-radius: 50px;
+}
+
+.level-ellipse-filled {
+  background-color: var(--level-color-dark);
+}
+
+/* For screens 768px and wider */
+@media (min-width: 768px) {
+  .MuiTypography-h5.level-text {
+    font-size: 32px;
+  }
+  .nav-icon {
+    width: 80px;
+    height: 80px;
+  }
+}
+
+/* For screens 1200px and wider */
+@media (min-width: 1200px) {
+  .MuiTypography-h5.level-text {
+    font-size: 40px;
+  }
+  .nav-icon {
+    width: 100px;
+    height: 100px;
+  }
+}

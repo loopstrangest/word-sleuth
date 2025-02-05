@@ -1,0 +1,59 @@
+Currently this app has a tutorial level set and navigation as described in TutorialWorld.me. This will be updated as follows.
+
+**Navigation:**
+
+Clicking the Tutorial button from Main Menu takes the user to Tutorial Menu.
+
+Clicking an enabled level square from Tutorial Menu takes the user to that level set.
+
+Clicking the back button from a tutorial level takes the user to Tutorial Menu.
+
+Clicking the back button from Tutorial Menu takes the user to Main Menu.
+
+
+**Tutorial Menu:**
+
+This page has four squares in a container, along with a TopBar that DOES show the sound and back buttons and DOES NOT SHOW the three stars.
+By default, top left square has opacity 100%, other three squares have opacity 33%.
+The opacity represents whether the tutorial set is available to play.
+Clicking the top left square takes the user to tutorial level set one. This square shows a 1 centered in it.
+When they are unlocked the top right (2), bottom left (3), and bottom right (4) squares take the user to tutorial levels sets two, three, and four.
+
+These squares use the colors redDark and redLight.
+
+The container for these squares is a square with side 65vw.
+The container for these squares sits absolute at the center of the webpage. This should be calculated on resize.
+All four squares are 30vw and are distributed at the corners of the container, space between is 5vw.
+
+When a tutorial set one is completed, its square in TutorialMenu gets an overlapping star similar to how it works in GameplayMenu, and the square for the next tutorial set becomes enabled with opacity 100%.
+Nothing special happens when the fourth tutorial set is completed aside from its square getting an overlapping star.
+
+Click an enabled square to go its levels. The app should track the same data that is tracked with the current tutorial level set. Tutorial Menu should know which tutorial sets have been completed.
+
+Use TutorialMenu.jsx and TutorialMenu.css files for the above.
+
+**Data and Rules:**
+
+The level data for these four sets is listed in worldText.js as consts tutorialSetOneLevels, tutorialSetTwoLevels, tutorialSetThreeLevels, tutorialSetFourLevels. tutorialSetFourLevels is already implemented in the game as the only tutorial set, this revision serves to include the three new tutorial sets.
+
+I do not know whether it's better app architecture to have the rules for these four worlds in separate files or all in one file. Please decide and justify that.
+
+Tutorial Sets One, Two, and Three only require at least one selected word in order to make a guess. Tutorial Set Four requires at least two selected words in order to make a guess.
+
+Tutorial Sets One and Two have one rule. Tutorial Sets Three and Four have two rules.
+
+Tutorial Set One rule: Every selected word must be a palindrome.
+Tutorial Set Two rule: Every selected word must start and end with the same letter.
+Tutorial Set Three rules: The second letter is e // the second to last letter is e
+The Tutorial Set Four rules are already written out in tutorialWorldRules.js.
+
+**Display:**
+
+As with the current tutorial level set, the levels will show the TopBar without the three stars, and the other usual level display stuff.
+
+TO DO:
+Implement tutorial colors.
+Implement tutorial hint words.
+Update level set number scheme from previous 0-5 setup.
+Update Tutorial Menu: number size, TopBar, colors.
+Overall testing.

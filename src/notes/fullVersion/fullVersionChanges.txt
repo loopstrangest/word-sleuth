@@ -1,0 +1,64 @@
+Full Version Change Roadmap – Major and Minor Updates
+
+1. Cross-Platform Compatibility and Packaging
+   - Mobile Apps (iOS & Android):
+     • Evaluate cross-platform frameworks (e.g., React Native, Expo, or Cordova/Capacitor) to build native-like mobile apps.
+     • Adjust touch interaction (gestures, tap areas) and performance optimizations for mobile devices.
+     • Optimize layout for varied screen sizes to ensure all words in a level are clearly legible.
+   - Desktop Releases (Steam, Itch.io):
+     • Continue using Electron for desktop versions, but consider decoupling shared logic from Electron-specific code.
+     • Integrate platform-specific file storage (such as electron-store) to support robust save file management.
+
+2. Dynamic, Data-Driven Level Management
+   - Replace Hardcoded Switch/Case Logic:
+     • Refactor Level.jsx and related components to remove large switch-case and if/else blocks.
+     • Introduce a configuration system (e.g., JSON or structured JavaScript objects) for all level sets. Each configuration should include:
+       ◦ Level text
+       ◦ Hidden rule identifiers
+       ◦ Hint words
+       ◦ Minimum word requirements
+     • Create a rule registry or mapping that maps rule IDs to their corresponding validation functions.
+   - Support 75+ Level Sets Grouped by Categories:
+     • Organize level sets by theme (e.g., “letters”, “order”, “semantics”) with metadata for easier filtering and presentation.
+     • Design the level loader to dynamically read from these configuration files instead of using hardcoded constants.
+
+3. UI/UX Enhancements for Multiple Display Modes
+   - Mobile Mode:
+     • Redesign menus and level layouts to maximize text readability.
+     • Use responsive design techniques (leveraging MUI’s breakpoint system) to ensure that level text, buttons, and navigation controls adapt smoothly to smaller screens.
+     • Consider alternative navigation patterns (e.g., bottom navigation bars) for improved mobile ergonomics.
+   - Desktop Mode:
+     • Ensure that the more spacious desktop layout continues to display additional decorative elements (e.g., animations, detailed hints) without crowding the interface.
+   - Consistent Control Positioning:
+     • Investigate and resolve any discrepancies by standardizing layout containers and CSS rules across views.
+
+4. Save File Management
+   - Multi-Save Support:
+     • Implement three save files (or profiles) to allow multiple user profiles.
+     • Update the progress management system to switch between profiles, giving users the ability to create, delete, and select save files.
+     • Consider migrating from localStorage to a more robust storage solution (e.g., electron-store for desktop and secure storage for mobile) that supports file-based saves.
+   - Cloud Save / Backup (Optional Future Enhancement):
+     • Provide an option for users to back up their progress to the cloud or export/import save files.
+
+5. Codebase Maintenance and Future-Proofing
+   - Modularization and Separation of Concerns:
+     • Isolate business logic (rule checking, level progression, progress tracking) from UI components.
+     • Adopt a more declarative style for level definitions, making it easier to add new types of rules and categories.
+     • Develop utility modules for common functions (e.g., audio playback, responsive adjustments, animations).
+   - Testing and Quality Assurance:
+     • Introduce unit tests for rule checking, level loading, and configuration parsing to ensure reliability as the level count grows.
+     • Consider automated testing for UI responsiveness across devices.
+   - Internationalization and Localization (Long-Term):
+     • Plan for multi-language support by externalizing text strings and level content into separate language files.
+   - Performance Optimizations:
+     • Optimize audio and animation performance, especially on lower-powered mobile devices.
+     • Use code splitting and lazy loading for large configuration files and rule modules if necessary.
+
+6. Additional Considerations
+   - Analytics and Feedback:
+     • Integrate tools for user feedback and analytics to monitor gameplay and level difficulty.
+   - Future Design Iterations:
+     • Keep in mind evolving gameplay mechanics and new hidden rule categories, which may require dynamic adjustments in the rule engine.
+     • Consider a level editor tool for content creators to add new level sets without modifying the core codebase.
+
+These changes aim to create a flexible, maintainable, and scalable codebase that supports Word Sleuth’s full vision across multiple platforms and a broad spectrum of levels.

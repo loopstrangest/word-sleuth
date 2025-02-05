@@ -1,0 +1,123 @@
+:root {
+  --menuDark: #171614;
+  --menuLight: #ede7d9;
+}
+
+.root-mainmenu,
+.root-credits {
+  display: flex;
+  width: 100%;
+  height: calc(var(--vh) * 100);
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: var(--menuDark);
+  background-color: var(--menuLight);
+}
+
+.mainmenu-title {
+  user-select: none;
+  margin-bottom: calc(var(--vh) * 0);
+  text-align: center;
+  font-weight: 700 !important;
+}
+
+.MuiTypography-h1.mainmenu-title {
+  margin: 0 2vw;
+  font-size: 5.5rem;
+}
+
+.mainmenu-button,
+.credits-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: var(--border-small) solid black;
+  border-radius: 0.5rem;
+  padding: 4px 8px 2px 8px;
+  margin-bottom: calc(var(--vh) * 1);
+  font-weight: 700;
+  cursor: pointer;
+  user-select: none;
+}
+
+.mainmenu-button:hover,
+.credits-button:hover {
+  color: var(--menuLight);
+  background-color: var(--menuDark);
+}
+
+.mainmenu-button > *,
+.credits-button > * {
+  font-size: var(--font-size-large);
+}
+
+.credits-image {
+  width: 350px;
+}
+
+/* New Styles for Social Links */
+.social-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 4vw;
+  margin-bottom: calc(var(--vh) * 2);
+}
+
+.social-links a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.social-icon {
+  width: 50px;
+  height: 50px;
+  fill: var(--menuDark);
+  transition: fill 0.3s, transform 0.3s;
+}
+
+.social-icon:hover {
+  fill: var(--menuLight);
+  transform: scale(1.1);
+}
+
+/* New Styles for Credits Image Container */
+.credits-image-container {
+  position: relative;
+  display: inline-block;
+}
+
+/* Glow Animation */
+@keyframes glow {
+  0% {
+    opacity: 0.75;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.75;
+  }
+}
+
+@media (min-width: 768px) {
+  .credits-image {
+    width: 375px;
+  }
+  .social-links {
+    gap: 3vw;
+  }
+}
+
+/* For screens 1200px and wider */
+@media (min-width: 1200px) {
+  .credits-image {
+    width: 400px;
+  }
+  .social-links {
+    margin-top: calc(var(--vh) * 1);
+    gap: 2vw;
+  }
+}

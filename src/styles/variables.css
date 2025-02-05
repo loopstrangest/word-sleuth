@@ -1,0 +1,29 @@
+:root {
+  /* Font Sizes */
+  --font-size-small: 1rem; /* 16px */
+  --font-size-medium: 1.25rem; /* 20px */
+  --font-size-large: 1.5rem; /* 24px */
+
+  /* Border Sizes */
+  --border-small: 0.1875rem; /* 3px */
+  --border-medium: 0.25rem; /* 4px */
+
+  /* Other Variables */
+  --menuDark: #4b4237;
+  --menuLight: #ede7d9;
+  --redDark: #a51717;
+  --redSelect: #e04141;
+  --redLight: #e2b3b3;
+  --greenDark: #229e22;
+  --greenSelect: #2dde3c;
+  --greenLight: #b6dfb5;
+  --blueDark: #2017a5;
+  --blueSelect: #419be0;
+  --blueLight: #b3b2e2;
+  --purpleDark: #7e007c;
+  --purpleSelect: #a956a9;
+  --purpleLight: #d4abd5;
+  --grayDark: #333333;
+  --graySelect: #646464;
+  --grayLight: #c9c9c9;
+}
