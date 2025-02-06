@@ -5,6 +5,7 @@ import {
   tutorialSetTwoLevels,
   tutorialSetThreeLevels,
   tutorialSetFourLevels,
+  worldOnePointOneLevels,
 } from "../data/worldText";
 
 /**
@@ -79,46 +80,76 @@ export function setData(data) {
 }
 
 /**
- * Checks if a tutorial set (1..4) is fully completed.
- * Maps setNumber => negative worldNumber => checks final level's completion.
+ * Checks if a set is fully completed.
+ * For tutorial sets (1..4): Maps setNumber => negative worldNumber => checks final level's completion.
+ * For letter sets (1.1..1.9): Uses the decimal number directly.
  */
 export function isTutorialSetComplete(setNumber) {
-  // Convert setNumber (1..4) to negative worldNumber (-1..-4)
-  const tutorialWorldNumber = -setNumber;
+  // For tutorial sets (integers 1-4)
+  if (Number.isInteger(setNumber)) {
+    // Convert setNumber (1..4) to negative worldNumber (-1..-4)
+    const tutorialWorldNumber = -setNumber;
 
-  // Figure out how many levels are in that set
-  let totalLevels = 0;
-  switch (setNumber) {
-    case 1:
-      totalLevels = tutorialSetOneLevels.length;
-      break;
-    case 2:
-      totalLevels = tutorialSetTwoLevels.length;
-      break;
-    case 3:
-      totalLevels = tutorialSetThreeLevels.length;
-      break;
-    case 4:
-      totalLevels = tutorialSetFourLevels.length;
-      break;
-    default:
+    // Figure out how many levels are in that set
+    let totalLevels = 0;
+    switch (setNumber) {
+      case 1:
+        totalLevels = tutorialSetOneLevels.length;
+        break;
+      case 2:
+        totalLevels = tutorialSetTwoLevels.length;
+        break;
+      case 3:
+        totalLevels = tutorialSetThreeLevels.length;
+        break;
+      case 4:
+        totalLevels = tutorialSetFourLevels.length;
+        break;
+      default:
+        return false;
+    }
+
+    // Retrieve stored data
+    const store = getData();
+    if (!store.worlds || !store.worlds[tutorialWorldNumber]) {
       return false;
+    }
+
+    // Check final level's completion
+    const finalLevelData = store.worlds[tutorialWorldNumber][totalLevels];
+    if (!finalLevelData || !finalLevelData.completed) {
+      return false;
+    }
+
+    return true;
   }
 
-  // Retrieve stored data
-  const store = getData();
-  if (!store.worlds || !store.worlds[tutorialWorldNumber]) {
-    return false;
-  }
+  // For letter sets (decimals 1.1-1.9)
+  else {
+    // Get total levels for this set
+    let totalLevels = 0;
+    switch (setNumber) {
+      case 1.1:
+        totalLevels = worldOnePointOneLevels.length;
+        break;
+      default:
+        return false;
+    }
 
-  // Check final level's completion
-  const finalLevelData = store.worlds[tutorialWorldNumber][totalLevels];
-  if (!finalLevelData || !finalLevelData.completed) {
-    return false;
-  }
+    // Retrieve stored data
+    const store = getData();
+    if (!store.worlds || !store.worlds[setNumber]) {
+      return false;
+    }
 
-  // If final level is completed, the set is considered finished
-  return true;
+    // Check final level's completion
+    const finalLevelData = store.worlds[setNumber][totalLevels];
+    if (!finalLevelData || !finalLevelData.completed) {
+      return false;
+    }
+
+    return true;
+  }
 }
 
 /**

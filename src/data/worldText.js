@@ -30,6 +30,18 @@ export const tutorialSetFourLevels = [
   "TIP: I want your feedback! This game is powered by people like you telling me about it. You can navigate to the feedback form from the credits page.",
 ];
 
+export const worldOnePointOneLevels = [
+  "These sets of levels are all about letters.",
+  "If something appears to be a rule, feel free to test it with different guesses.",
+  "Persistence, patience, perhaps chance... culminating in clarity!",
+  "Careful craftsmanship and precise planning were essential for this enterprise.",
+  "Feverish feedback on initial iterations said: deviously difficult!",
+  "Giving the people what they desire is my perpetual priority.",
+  "Time will reveal whether this refined gameplay, informed by lessons learned and efforts expended, attracts an audience.",
+];
+
+/*
+
 export const worldOneLevels = [
   "May love pour through our soul - weaving us together as one.",
   "May light flower in our heart - lending us the grace to transform all fear.",
@@ -70,7 +82,7 @@ export const worldFourLevels = [
   "Thank you for watching yourself enjoy word sleuth :^)",
 ];
 
-/*export const worldTwoLevels = [
+export const worldTwoLevels = [
   "I'm going to go take an everything shower... what's that? It's when I eat an everything bagel in the shower.",
   "I feel like a blob today. I will join my fellow slimes and together we will wreak havoc upon this Lamaze class.",
   'Your request is denied. You simply cannot challenge the mall Santa to a, and I quote, "Naughty and Nasty Nick-off." What does that even mean?',

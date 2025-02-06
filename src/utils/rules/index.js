@@ -2,6 +2,7 @@ import { checkTutorialSetOneRules } from "./tutorialSetOneRules";
 import { checkTutorialSetTwoRules } from "./tutorialSetTwoRules";
 import { checkTutorialSetThreeRules } from "./tutorialSetThreeRules";
 import { checkTutorialSetFourRules } from "./tutorialSetFourRules";
+import { checkWorldOnePointOneRules } from "./worldOnePointOneRules";
 
 // Tutorial sets: -4 to -1
 export const WORLD_IDS = {
@@ -9,6 +10,7 @@ export const WORLD_IDS = {
   TUTORIAL_TWO: -2,
   TUTORIAL_THREE: -3,
   TUTORIAL_FOUR: -4,
+  WORLD_ONE_POINT_ONE: 1.1,
 };
 
 /**
@@ -27,6 +29,8 @@ export function checkWorldRules(worldNumber, selectedWords) {
       return checkTutorialSetThreeRules(selectedWords);
     case WORLD_IDS.TUTORIAL_FOUR:
       return checkTutorialSetFourRules(selectedWords);
+    case WORLD_IDS.WORLD_ONE_POINT_ONE:
+      return checkWorldOnePointOneRules(selectedWords);
     default:
       console.warn(`No rule logic found for worldNumber=${worldNumber}`);
       return [false];

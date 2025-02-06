@@ -1,0 +1,14 @@
+For future changes, you'll use this workflow:
+
+Make your changes to the code
+git add . (or git add specific-file for specific files)
+git commit -m "Your commit message describing the changes"
+git push
+
+Some additional tips:
+
+Use git status to see what files have changed
+Use git log to see your commit history
+Create meaningful commit messages that describe what changed
+Consider creating different branches for new features
+Remember to git pull before starting work if you're collaborating with others

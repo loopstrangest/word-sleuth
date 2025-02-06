@@ -52,6 +52,7 @@ const hintWordsWorldThree = [
   "infinite",
 ];
 const hintWordsWorldFour = ["hey", "hi", "howdy"];
+const hintWordsWorldOnePointOne = ["levels", "letters", "appears", "different"];
 
 export default function Level({
   text,
@@ -82,8 +83,8 @@ export default function Level({
       default:
         // main worlds
         switch (wNum) {
-          case WORLD_IDS.WORLD_ONE: // 1
-            return [false, false]; // example 2 rules
+          case WORLD_IDS.WORLD_ONE_POINT_ONE: // 1.1
+            return [false, false]; // 2 rules
           case WORLD_IDS.WORLD_TWO: // 2
             return [false, false];
           case WORLD_IDS.WORLD_THREE: // 3
@@ -404,6 +405,12 @@ export default function Level({
   } else if (worldNumber === WORLD_IDS.WORLD_FOUR) {
     if (levelNumber === 1) {
       hintWords = hintWordsWorldFour;
+    }
+  } else if (worldNumber === WORLD_IDS.WORLD_ONE_POINT_ONE) {
+    if (levelNumber === 1) {
+      hintWords = hintWordsWorldOnePointOne.slice(0, 2);
+    } else if (levelNumber === 2) {
+      hintWords = hintWordsWorldOnePointOne.slice(2, 4);
     }
   }
 

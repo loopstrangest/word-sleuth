@@ -8,6 +8,7 @@ import {
   tutorialSetTwoLevels,
   tutorialSetThreeLevels,
   tutorialSetFourLevels,
+  worldOnePointOneLevels,
 } from "./data/worldText";
 import {
   getLastAccessedLevel,
@@ -32,6 +33,8 @@ function getTotalLevelsForStage(stage) {
       return tutorialSetThreeLevels.length;
     case WORLD_IDS.TUTORIAL_FOUR:
       return tutorialSetFourLevels.length;
+    case WORLD_IDS.WORLD_ONE_POINT_ONE:
+      return worldOnePointOneLevels.length;
     default:
       return 1;
   }
@@ -153,6 +156,8 @@ export default function App() {
               ? tutorialSetThreeLevels[currentLevel - 1]
               : currentStage === WORLD_IDS.TUTORIAL_FOUR
               ? tutorialSetFourLevels[currentLevel - 1]
+              : currentStage === WORLD_IDS.WORLD_ONE_POINT_ONE
+              ? worldOnePointOneLevels[currentLevel - 1]
               : ""
           }
           levelNumber={currentLevel}

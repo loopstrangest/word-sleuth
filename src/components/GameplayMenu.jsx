@@ -5,7 +5,6 @@ import "../styles/GameplayMenu.css";
 import { Star, Triangle } from "./SVGAssets";
 import {
   isTutorialSetComplete,
-  getLastAccessedLevel,
   saveLastVisitedGroup,
   getLastVisitedGroup,
 } from "../utils/progressUtils";
@@ -21,7 +20,7 @@ const GROUPS = {
   LETTERS: {
     id: "letters",
     image: "/src/assets/images/groupTitleBoxes/letters.png",
-    sets: [1, 2, 3, 4, 5, 6, 7, 8, 9],
+    sets: [1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9],
     prefix: "1",
   },
 };
@@ -41,27 +40,37 @@ export default function GameplayMenu({
   useEffect(() => {
     const updateProgress = () => {
       const newCompletedSets = [];
-      if (currentGroup.id === "tutorial") {
-        currentGroup.sets.forEach((setNum) => {
-          if (isTutorialSetComplete(setNum)) {
-            newCompletedSets.push(setNum);
-          }
-        });
-      }
+      // Check completion for both tutorial and letter sets
+      currentGroup.sets.forEach((setNum) => {
+        if (isTutorialSetComplete(setNum)) {
+          newCompletedSets.push(setNum);
+        }
+      });
       setCompletedSets(newCompletedSets);
     };
 
     updateProgress();
+    // Listen for both tutorial and regular progress updates
     window.addEventListener("tutorialProgressUpdate", updateProgress);
+    window.addEventListener("progressUpdate", updateProgress);
 
     return () => {
       window.removeEventListener("tutorialProgressUpdate", updateProgress);
+      window.removeEventListener("progressUpdate", updateProgress);
     };
   }, [currentGroup]);
 
   const isSetEnabled = (setNumber) => {
-    if (setNumber === 1) return true;
-    return completedSets.includes(setNumber - 1);
+    if (currentGroup.id === "tutorial") {
+      // For tutorial sets, use integer comparison
+      if (setNumber === 1) return true;
+      return completedSets.includes(setNumber - 1);
+    } else {
+      // For letter sets, enable 1.1 by default, then require previous decimal to be completed
+      if (setNumber === 1.1) return true;
+      const prevSet = Math.round((setNumber - 0.1) * 10) / 10; // Handle floating point precision
+      return completedSets.includes(prevSet);
+    }
   };
 
   const isGroupComplete = () => {
@@ -85,8 +94,7 @@ export default function GameplayMenu({
   function handleSetClick(setNumber) {
     if (!isSetEnabled(setNumber)) return;
     const worldNumber = currentGroup.id === "tutorial" ? -setNumber : setNumber;
-    const lastLevel = getLastAccessedLevel(worldNumber);
-    onSetSelect(worldNumber, lastLevel);
+    onSetSelect(worldNumber);
   }
 
   const getGroupColors = () => {
@@ -185,15 +193,16 @@ export default function GameplayMenu({
                   color: getGroupColors().dark,
                 }}
               >
-                {currentGroup.id === "tutorial" &&
-                  completedSets.includes(setNum) && (
-                    <Star
-                      className="level-set-star"
-                      style={{ fill: getGroupColors().dark }}
-                    />
-                  )}
+                {completedSets.includes(setNum) && (
+                  <Star
+                    className="level-set-star"
+                    style={{ fill: getGroupColors().dark }}
+                  />
+                )}
                 <span className="level-set-number">
-                  {currentGroup.prefix}.{setNum}
+                  {currentGroup.id === "tutorial"
+                    ? `${currentGroup.prefix}.${setNum}`
+                    : setNum}
                 </span>
               </Box>
             );
