@@ -84,7 +84,13 @@
 
 .word {
   cursor: pointer;
-  padding: 1.5px;
+  padding: 2px 4px;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}
+
+.word:hover {
+  background-color: var(--level-color-select);
 }
 
 .punctuation {
@@ -92,16 +98,20 @@
 }
 
 .word-hint {
-  border-bottom: 2px dotted var(--level-color-dark);
-  margin-bottom: -2px;
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
+  text-decoration-color: var(--level-color-dark);
 }
 
 .word-selected {
-  background-color: var(--level-color-select);
-  opacity: 1;
-  border-radius: 6px;
-  border-bottom: none;
-  margin-bottom: 0px;
+  background-color: var(--level-color-dark);
+  color: white;
+}
+
+.word-selected:hover {
+  background-color: var(--level-color-dark);
 }
 
 .nav-icon {

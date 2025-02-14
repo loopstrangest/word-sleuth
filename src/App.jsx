@@ -4,60 +4,93 @@ import MainMenu from "./components/MainMenu";
 import GameplayMenu from "./components/GameplayMenu";
 import Level from "./components/Level";
 import {
-  tutorialSetOneLevels,
-  tutorialSetTwoLevels,
-  tutorialSetThreeLevels,
-  tutorialSetFourLevels,
-  worldOnePointOneLevels,
-} from "./data/worldText";
-import {
   getLastAccessedLevel,
   setLastAccessedLevel,
   getSoundLevel,
   setSoundLevel as saveSoundLevel,
 } from "./utils/progressUtils";
 import { WORLD_IDS } from "./utils/rules";
+import {
+  WORLD_STRUCTURE,
+  getLevelInfo,
+  getDisplayId,
+} from "./data/worlds/worldStructure";
 import "./styles/Level.css";
+
+// Import world text files
+import {
+  tutorialSetOneLevels,
+  tutorialSetTwoLevels,
+  tutorialSetThreeLevels,
+  tutorialSetFourLevels,
+} from "./data/worlds/worldZeroText.js";
+import {
+  worldOnePointOneLevels,
+  worldOnePointTwoLevels,
+  worldOnePointThreeLevels,
+} from "./data/worlds/worldOneText.js";
 
 /**
  * Returns the total number of levels for a given stage.
  * This is a pure utility function that doesn't rely on component state.
  */
-function getTotalLevelsForStage(stage) {
-  switch (stage) {
-    case WORLD_IDS.TUTORIAL_ONE:
-      return tutorialSetOneLevels.length;
-    case WORLD_IDS.TUTORIAL_TWO:
-      return tutorialSetTwoLevels.length;
-    case WORLD_IDS.TUTORIAL_THREE:
-      return tutorialSetThreeLevels.length;
-    case WORLD_IDS.TUTORIAL_FOUR:
-      return tutorialSetFourLevels.length;
-    case WORLD_IDS.WORLD_ONE_POINT_ONE:
-      return worldOnePointOneLevels.length;
-    default:
-      return 1;
-  }
+function getTotalLevelsForStage(worldId) {
+  const worldInfo = WORLD_STRUCTURE[worldId];
+  if (!worldInfo) return 0;
+  return worldInfo.sets[0].numLevels; // Assuming all sets in a world have same number of levels
 }
 
-/**
- * Clamps the given level (if invalid) into a valid range for the specified stage.
- * Also a pure utility function with no component-state dependencies.
- */
-function clampLevel(stage, level) {
-  const total = getTotalLevelsForStage(stage);
-  if (!level || typeof level !== "number") level = 1;
-  if (level < 1) level = 1;
-  if (level > total) level = total;
-  return level;
+function getLevelText(displayId) {
+  const { worldId, setId, levelNum } = getLevelInfo(displayId);
+
+  // Get the correct text based on worldId and setId
+  let levelSet;
+  if (worldId === 0) {
+    switch (setId) {
+      case 1:
+        levelSet = tutorialSetOneLevels;
+        break;
+      case 2:
+        levelSet = tutorialSetTwoLevels;
+        break;
+      case 3:
+        levelSet = tutorialSetThreeLevels;
+        break;
+      case 4:
+        levelSet = tutorialSetFourLevels;
+        break;
+      default:
+        console.error(`No text found for tutorial set ${setId}`);
+        return "";
+    }
+  } else if (worldId === 1) {
+    switch (setId) {
+      case 1:
+        levelSet = worldOnePointOneLevels;
+        break;
+      case 2:
+        levelSet = worldOnePointTwoLevels;
+        break;
+      case 3:
+        levelSet = worldOnePointThreeLevels;
+        break;
+      default:
+        console.error(`No text found for world ${worldId} set ${setId}`);
+        return "";
+    }
+  } else {
+    console.error(`No text found for world ${worldId}`);
+    return "";
+  }
+
+  return levelSet.levelText[levelNum - 1] || "";
 }
 
 export default function App() {
   const [darkMode, setDarkMode] = useState(false);
   const [view, setView] = useState("main"); // 'main', 'gameplay', 'level'
   const [soundLevel, setSoundLevel] = useState(() => getSoundLevel() || "low");
-  const [currentStage, setCurrentStage] = useState(null);
-  const [currentLevel, setCurrentLevel] = useState(null);
+  const [currentDisplayId, setCurrentDisplayId] = useState(null);
 
   const theme = useMemo(
     () =>
@@ -73,32 +106,37 @@ export default function App() {
     setView("gameplay");
   };
 
-  const handleStageSelect = useCallback((stage) => {
-    const storedLevel = getLastAccessedLevel(stage) || 1;
-    const clampedLevel = clampLevel(stage, storedLevel);
-
-    setCurrentStage(stage);
-    setCurrentLevel(clampedLevel);
+  const handleStageSelect = useCallback((displayId) => {
+    const { worldId, setId } = getLevelInfo(displayId);
+    const storedLevel = getLastAccessedLevel(worldId, setId) || 1;
+    setCurrentDisplayId(getDisplayId(worldId, setId, storedLevel));
     setView("level");
   }, []);
 
   const handleLevelNav = (direction) => {
-    let totalLevels = getTotalLevelsForStage(currentStage);
-    let newLevel = currentLevel;
+    if (!currentDisplayId) return;
+
+    const { worldId, setId, levelNum } = getLevelInfo(currentDisplayId);
+    const worldInfo = WORLD_STRUCTURE[worldId];
+    const setInfo = worldInfo?.sets.find((set) => set.id === setId);
+    if (!setInfo) return;
+
+    const totalLevels = setInfo.numLevels;
+    let newLevel = levelNum;
 
     if (direction === "next") {
       if (newLevel < totalLevels) {
         newLevel++;
-        setCurrentLevel(newLevel);
-        setLastAccessedLevel(currentStage, newLevel);
+        setCurrentDisplayId(getDisplayId(worldId, setId, newLevel));
+        setLastAccessedLevel(worldId, setId, newLevel);
       } else {
         setView("gameplay");
       }
     } else if (direction === "prev") {
       if (newLevel > 1) {
         newLevel--;
-        setCurrentLevel(newLevel);
-        setLastAccessedLevel(currentStage, newLevel);
+        setCurrentDisplayId(getDisplayId(worldId, setId, newLevel));
+        setLastAccessedLevel(worldId, setId, newLevel);
       }
     }
   };
@@ -145,28 +183,20 @@ export default function App() {
           setSoundLevel={handleSetSoundLevel}
         />
       )}
-      {view === "level" && currentStage !== null && (
+      {view === "level" && currentDisplayId !== null && (
         <Level
-          text={
-            currentStage === WORLD_IDS.TUTORIAL_ONE
-              ? tutorialSetOneLevels[currentLevel - 1]
-              : currentStage === WORLD_IDS.TUTORIAL_TWO
-              ? tutorialSetTwoLevels[currentLevel - 1]
-              : currentStage === WORLD_IDS.TUTORIAL_THREE
-              ? tutorialSetThreeLevels[currentLevel - 1]
-              : currentStage === WORLD_IDS.TUTORIAL_FOUR
-              ? tutorialSetFourLevels[currentLevel - 1]
-              : currentStage === WORLD_IDS.WORLD_ONE_POINT_ONE
-              ? worldOnePointOneLevels[currentLevel - 1]
-              : ""
-          }
-          levelNumber={currentLevel}
-          totalLevels={getTotalLevelsForStage(currentStage)}
+          displayId={currentDisplayId}
+          text={getLevelText(currentDisplayId)}
+          totalLevels={getTotalLevelsForStage(
+            getLevelInfo(currentDisplayId).worldId
+          )}
           onNext={() => handleLevelNav("next")}
           onPrev={() => handleLevelNav("prev")}
-          isLastLevel={currentLevel === getTotalLevelsForStage(currentStage)}
+          isLastLevel={
+            getLevelInfo(currentDisplayId).levelNum ===
+            getTotalLevelsForStage(getLevelInfo(currentDisplayId).worldId)
+          }
           goBack={handleGoBackToGameplay}
-          worldNumber={currentStage}
           soundLevel={soundLevel}
           setSoundLevel={handleSetSoundLevel}
         />

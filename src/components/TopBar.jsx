@@ -1,4 +1,4 @@
-import { Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import PropTypes from "prop-types";
 import { BackButton, SoundLow, SoundHigh, SoundOff, Star } from "./SVGAssets";
 import partialSound from "../assets/audio/partial.mp3";
@@ -12,7 +12,7 @@ export default function TopBar({
   colorDark,
   worldsCompleted,
   onStarWorldClick,
-  hideStars = false,
+  displayId,
 }) {
   const getVolume = useCallback((level) => {
     switch (level) {
@@ -57,8 +57,21 @@ export default function TopBar({
       alignItems="center"
       mb={2}
     >
-      <Box>
-        {!hideStars && worldsCompleted !== undefined && (
+      <Box display="flex" alignItems="center">
+        {displayId && (
+          <Typography
+            variant="h5"
+            style={{
+              color: colorDark,
+              marginRight: "10px",
+              fontWeight: "bold",
+              userSelect: "none",
+            }}
+          >
+            {displayId}
+          </Typography>
+        )}
+        {worldsCompleted !== undefined && (
           <Box
             className={`stars-container ${
               allWorldsCompleted ? "completed" : ""
@@ -144,5 +157,5 @@ TopBar.propTypes = {
   colorDark: PropTypes.string.isRequired,
   worldsCompleted: PropTypes.arrayOf(PropTypes.number),
   onStarWorldClick: PropTypes.func,
-  hideStars: PropTypes.bool,
+  displayId: PropTypes.string,
 };

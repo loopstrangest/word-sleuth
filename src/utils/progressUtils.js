@@ -1,61 +1,63 @@
 // src/utils/progressUtils.js
 import { getData, setData as storeSetData } from "./storage";
-import {
-  tutorialSetOneLevels,
-  tutorialSetTwoLevels,
-  tutorialSetThreeLevels,
-  tutorialSetFourLevels,
-  worldOnePointOneLevels,
-} from "../data/worldText";
+import { WORLD_STRUCTURE } from "../data/worlds/worldStructure";
 
 /**
- * Load the saved data (selected words, rule states, completion) for a given tutorial set.
- * Uses negative worldNumbers for tutorial sets (-1, -2, -3, -4).
+ * Load the saved data for a given level.
+ * @param {number} worldId - The world ID (e.g., 0 for tutorial)
+ * @param {number} setId - The set ID within the world
+ * @param {number} levelNum - The level number within the set
  */
-export function loadLevelData(worldNumber, levelNumber) {
+export function loadLevelData(worldId, setId, levelNum) {
   const data = JSON.parse(localStorage.getItem("wordSleuthProgress")) || {
     worlds: {},
   };
 
-  // Ensure worldNumber entry exists
-  if (!data.worlds[worldNumber]) {
-    data.worlds[worldNumber] = {};
+  // Ensure nested structure exists
+  if (!data.worlds[worldId]) {
+    data.worlds[worldId] = {};
+  }
+  if (!data.worlds[worldId][setId]) {
+    data.worlds[worldId][setId] = {};
   }
 
   // If this level doesn't have saved data yet, create a default entry
-  if (!data.worlds[worldNumber][levelNumber]) {
-    data.worlds[worldNumber][levelNumber] = {
+  if (!data.worlds[worldId][setId][levelNum]) {
+    data.worlds[worldId][setId][levelNum] = {
       selectedWords: [],
       ruleStates: [],
       completed: false,
     };
   }
 
-  // Persist any new worlds/levels structure
+  // Persist any new structure
   localStorage.setItem("wordSleuthProgress", JSON.stringify(data));
 
-  return data.worlds[worldNumber][levelNumber];
+  return data.worlds[worldId][setId][levelNum];
 }
 
 /**
- * Save partial or complete changes to a tutorial set's level data.
+ * Save partial or complete changes to a level's data.
  */
-export function saveLevelData(worldNumber, levelNumber, newData) {
+export function saveLevelData(worldId, setId, levelNum, newData) {
   const store = getData();
   if (!store.worlds) {
     store.worlds = {};
   }
-  if (!store.worlds[worldNumber]) {
-    store.worlds[worldNumber] = {};
+  if (!store.worlds[worldId]) {
+    store.worlds[worldId] = {};
+  }
+  if (!store.worlds[worldId][setId]) {
+    store.worlds[worldId][setId] = {};
   }
 
-  const existing = store.worlds[worldNumber][levelNumber] || {
+  const existing = store.worlds[worldId][setId][levelNum] || {
     selectedWords: [],
     ruleStates: [],
     completed: false,
   };
 
-  store.worlds[worldNumber][levelNumber] = {
+  store.worlds[worldId][setId][levelNum] = {
     ...existing,
     ...newData,
   };
@@ -81,105 +83,73 @@ export function setData(data) {
 
 /**
  * Checks if a set is fully completed.
- * For tutorial sets (1..4): Maps setNumber => negative worldNumber => checks final level's completion.
- * For letter sets (1.1..1.9): Uses the decimal number directly.
+ * @param {number} worldId - The world ID (e.g., 0 for tutorial)
+ * @param {number} setId - The set ID within the world (e.g., 1 for first set)
+ * @returns {boolean} Whether the set is completed
  */
-export function isTutorialSetComplete(setNumber) {
-  // For tutorial sets (integers 1-4)
-  if (Number.isInteger(setNumber)) {
-    // Convert setNumber (1..4) to negative worldNumber (-1..-4)
-    const tutorialWorldNumber = -setNumber;
+export function isTutorialSetComplete(worldId, setId) {
+  // Get total levels for this set from WORLD_STRUCTURE
+  const worldInfo = WORLD_STRUCTURE[worldId];
+  if (!worldInfo) return false;
 
-    // Figure out how many levels are in that set
-    let totalLevels = 0;
-    switch (setNumber) {
-      case 1:
-        totalLevels = tutorialSetOneLevels.length;
-        break;
-      case 2:
-        totalLevels = tutorialSetTwoLevels.length;
-        break;
-      case 3:
-        totalLevels = tutorialSetThreeLevels.length;
-        break;
-      case 4:
-        totalLevels = tutorialSetFourLevels.length;
-        break;
-      default:
-        return false;
-    }
+  const setInfo = worldInfo.sets.find((set) => set.id === setId);
+  if (!setInfo) return false;
 
-    // Retrieve stored data
-    const store = getData();
-    if (!store.worlds || !store.worlds[tutorialWorldNumber]) {
-      return false;
-    }
+  const totalLevels = setInfo.numLevels;
 
-    // Check final level's completion
-    const finalLevelData = store.worlds[tutorialWorldNumber][totalLevels];
-    if (!finalLevelData || !finalLevelData.completed) {
-      return false;
-    }
-
-    return true;
+  // Retrieve stored data
+  const store = getData();
+  if (!store.worlds?.[worldId]?.[setId]) {
+    return false;
   }
 
-  // For letter sets (decimals 1.1-1.9)
-  else {
-    // Get total levels for this set
-    let totalLevels = 0;
-    switch (setNumber) {
-      case 1.1:
-        totalLevels = worldOnePointOneLevels.length;
-        break;
-      default:
-        return false;
-    }
-
-    // Retrieve stored data
-    const store = getData();
-    if (!store.worlds || !store.worlds[setNumber]) {
-      return false;
-    }
-
-    // Check final level's completion
-    const finalLevelData = store.worlds[setNumber][totalLevels];
-    if (!finalLevelData || !finalLevelData.completed) {
-      return false;
-    }
-
-    return true;
+  // Check final level's completion
+  const finalLevelData = store.worlds[worldId][setId][totalLevels];
+  if (!finalLevelData?.completed) {
+    return false;
   }
+
+  return true;
 }
 
 /**
- * Return which level was last accessed in a specific tutorial set. Defaults to 1 if none saved.
+ * Return which level was last accessed in a specific world/set. Defaults to 1 if none saved.
  */
-export function getLastAccessedLevel(worldNumber) {
-  const data = JSON.parse(localStorage.getItem("wordSleuthProgress")) || {
-    worlds: {},
-  };
-
-  if (
-    data.lastAccessedLevels &&
-    data.lastAccessedLevels[worldNumber] &&
-    typeof data.lastAccessedLevels[worldNumber] === "number"
-  ) {
-    return data.lastAccessedLevels[worldNumber];
-  }
-  return 1;
-}
-
-/**
- * Updates the last-accessed level for a given tutorial set.
- */
-export function setLastAccessedLevel(worldNumber, levelNumber) {
+export function getLastAccessedLevel(worldId, setId) {
   const data = JSON.parse(localStorage.getItem("wordSleuthProgress")) || {
     worlds: {},
     lastAccessedLevels: {},
   };
 
-  data.lastAccessedLevels[worldNumber] = levelNumber;
+  // Ensure nested structure exists
+  if (!data.lastAccessedLevels) {
+    data.lastAccessedLevels = {};
+  }
+  if (!data.lastAccessedLevels[worldId]) {
+    data.lastAccessedLevels[worldId] = {};
+  }
+
+  return data.lastAccessedLevels[worldId][setId] || 1;
+}
+
+/**
+ * Updates the last-accessed level for a given world/set.
+ */
+export function setLastAccessedLevel(worldId, setId, levelNum) {
+  const data = JSON.parse(localStorage.getItem("wordSleuthProgress")) || {
+    worlds: {},
+    lastAccessedLevels: {},
+  };
+
+  // Ensure nested structure exists
+  if (!data.lastAccessedLevels) {
+    data.lastAccessedLevels = {};
+  }
+  if (!data.lastAccessedLevels[worldId]) {
+    data.lastAccessedLevels[worldId] = {};
+  }
+
+  data.lastAccessedLevels[worldId][setId] = levelNum;
   localStorage.setItem("wordSleuthProgress", JSON.stringify(data));
 }
 
@@ -226,10 +196,10 @@ export function setSoundLevel(level) {
   localStorage.setItem("wordSleuthProgress", JSON.stringify(data));
 }
 
-export function saveLastVisitedGroup(groupId) {
-  localStorage.setItem("lastVisitedGroup", groupId);
+export function saveLastVisitedWorld(worldId) {
+  localStorage.setItem("lastVisitedWorld", worldId);
 }
 
-export function getLastVisitedGroup() {
-  return localStorage.getItem("lastVisitedGroup") || "tutorial";
+export function getLastVisitedWorld() {
+  return localStorage.getItem("lastVisitedWorld") || "tutorial";
 }

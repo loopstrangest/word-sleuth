@@ -1,0 +1,7 @@
+
+
+~*~*~*~*~
+FIXED:
+Not showing hint worlds
+Not using correct level logic for 0.1
+Showing multiple rule circles for 0.1.3 and 0.1.4

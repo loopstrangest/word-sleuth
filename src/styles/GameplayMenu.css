@@ -15,28 +15,28 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 2rem;
-  padding: 2rem;
+  gap: min(1.5rem, 2vh);
+  padding: min(1.5rem, 2vh);
   position: relative;
+  min-height: 0;
 }
 
-.group-title-container {
+.world-title-container {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 2rem;
-  width: 80%;
-  max-width: 400px;
-  padding: 0 1rem;
+  gap: min(2rem, 2vh);
+  width: min(90%, 400px);
+  padding: 0 min(2rem, 2vh);
 }
 
 .navigation-button {
-  width: 4rem;
-  height: 4.25rem;
+  width: min(6rem, min(12vw, 8vh));
+  height: auto;
   cursor: pointer;
   fill: currentColor;
   stroke: currentColor;
-  stroke-width: 8;
+  stroke-width: min(8, 1.2vw);
   user-select: none;
   transition: transform 0.2s ease;
   flex-shrink: 0;
@@ -51,14 +51,13 @@
   transform: rotate(180deg);
 }
 
-.group-title-box {
+.world-title-box {
   background-color: var(--redDark);
-  border-radius: 8px;
+  border-radius: min(8px, 1.2vh);
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 80%;
-  max-width: 200px;
+  width: min(75%, min(180px, 25vh));
   aspect-ratio: 1;
   box-sizing: border-box;
   overflow: hidden;
@@ -72,41 +71,24 @@
   display: block;
 }
 
-.title-text {
-  font-size: 2.5rem !important;
-  font-weight: bold !important;
-  line-height: 1 !important;
-  letter-spacing: 1rem !important;
-  text-align: center !important;
-  width: 100% !important;
-  height: 33.333% !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  margin: 0 !important;
-  padding: 0 1rem 0 0 !important;
-  box-sizing: border-box !important;
-  user-select: none !important;
-  outline: 1px solid black;
-}
-
 .level-sets-container {
   display: grid;
-  gap: 1rem;
-  width: 80%;
-  max-width: 400px;
-  margin-top: 1rem;
-  aspect-ratio: 1;
+  gap: min(0.75rem, 1vh);
+  width: min(90%, min(400px, 50vh));
+  margin-top: min(0.75rem, 1vh);
+  max-height: min(400px, 50vh);
   transition: gap 0.2s ease;
 }
 
 .level-sets-container.tutorial {
   grid-template-columns: repeat(2, 1fr);
+  grid-auto-rows: 1fr;
 }
 
 .level-sets-container.letters {
   grid-template-columns: repeat(3, 1fr);
-  gap: 0.75rem;
+  grid-auto-rows: 1fr;
+  gap: min(0.5rem, 0.75vh);
 }
 
 .level-set-box {
@@ -114,8 +96,8 @@
   width: 100%;
   aspect-ratio: 1;
   background-color: var(--set-color-light);
-  border: 3px solid var(--set-color-dark);
-  border-radius: 8px;
+  border: min(2px, 0.4vh) solid var(--set-color-dark);
+  border-radius: min(6px, 1vh);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -127,11 +109,11 @@
 }
 
 .level-sets-container.tutorial .level-set-box {
-  font-size: 1.5rem;
+  font-size: min(4rem, 5vh);
 }
 
 .level-sets-container.letters .level-set-box {
-  font-size: 1.4rem;
+  font-size: min(3rem, 4vh);
 }
 
 .level-set-box.disabled {

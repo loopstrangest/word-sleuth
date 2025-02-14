@@ -3,7 +3,7 @@ import { Box, Typography } from "@mui/material";
 import "../styles/Level.css";
 import { Triangle, Star, SubmitButton } from "./SVGAssets";
 import TopBar from "./TopBar";
-import { checkWorldRules, extractWords, WORLD_IDS } from "../utils/rules";
+import { checkWorldRules } from "../utils/rules";
 import {
   loadLevelData,
   saveLevelData,
@@ -15,54 +15,57 @@ import successSound from "../assets/audio/success.mp3";
 import bigSuccessSound from "../assets/audio/bigSuccess.mp3";
 import PropTypes from "prop-types";
 import { dispatchEventCompat } from "../utils/dispatchEventCompat";
+import { getLevelInfo } from "../data/worlds/worldStructure";
+import {
+  tutorialSetOneLevels,
+  tutorialSetTwoLevels,
+  tutorialSetThreeLevels,
+  tutorialSetFourLevels,
+} from "../data/worlds/worldZeroText.js";
+import {
+  worldOnePointOneLevels,
+  worldOnePointTwoLevels,
+  worldOnePointThreeLevels,
+} from "../data/worlds/worldOneText.js";
 
-const hintWordsTutorialSetOne = ["level", "racecar", "kayak", "did", "a"];
-const hintWordsTutorialSetTwo = ["level", "that", "set's", "sometimes"];
-const hintWordsTutorialSetThree = ["level", "required", "center"];
-const hintWordsTutorialSetFour = [
-  "final",
-  "makes",
-  "least",
-  "means",
-  "gamers",
-  "valid",
-];
-const hintWordsWorldOne = [
-  "love",
-  "together",
-  "flower",
-  "grace",
-  "radiate",
-  "prosperity",
-];
-const hintWordsWorldTwo = [
-  "talent",
-  "knack",
-  "excellence",
-  "stairs",
-  "high",
-  "concern",
-];
-const hintWordsWorldThree = [
-  "me",
-  "love",
-  "my",
-  "ultimate",
-  "follow",
-  "infinite",
-];
-const hintWordsWorldFour = ["hey", "hi", "howdy"];
-const hintWordsWorldOnePointOne = ["levels", "letters", "appears", "different"];
+// Helper to get the correct level set data
+function getLevelSetData(worldId, setId) {
+  if (worldId === 0) {
+    switch (setId) {
+      case 1:
+        return tutorialSetOneLevels;
+      case 2:
+        return tutorialSetTwoLevels;
+      case 3:
+        return tutorialSetThreeLevels;
+      case 4:
+        return tutorialSetFourLevels;
+      default:
+        return null;
+    }
+  } else if (worldId === 1) {
+    switch (setId) {
+      case 1:
+        return worldOnePointOneLevels;
+      case 2:
+        return worldOnePointTwoLevels;
+      case 3:
+        return worldOnePointThreeLevels;
+      default:
+        return null;
+    }
+  }
+  return null;
+}
 
 export default function Level({
+  displayId,
   text,
-  levelNumber,
   totalLevels,
   onNext,
   onPrev,
   isLastLevel,
   goBack,
-  worldNumber,
   soundLevel,
   setSoundLevel,
 }) {
@@ -70,46 +73,17 @@ export default function Level({
   const [ruleStates, setRuleStates] = useState([]);
   const [completed, setCompleted] = useState(false);
 
+  // Get level info from the display ID
+  const { worldId, setId, levelNum, setInfo } = getLevelInfo(displayId);
+
   // 1) Determine how many rules
-  function getInitialRuleStates(wNum) {
-    // If negative => tutorial sets
-    switch (wNum) {
-      case WORLD_IDS.TUTORIAL_ONE: // -1
-      case WORLD_IDS.TUTORIAL_TWO: // -2
-        return [false]; // 1 rule
-      case WORLD_IDS.TUTORIAL_THREE: // -3
-      case WORLD_IDS.TUTORIAL_FOUR: // -4
-        return [false, false]; // 2 rules
-      default:
-        // main worlds
-        switch (wNum) {
-          case WORLD_IDS.WORLD_ONE_POINT_ONE: // 1.1
-            return [false, false]; // 2 rules
-          case WORLD_IDS.WORLD_TWO: // 2
-            return [false, false];
-          case WORLD_IDS.WORLD_THREE: // 3
-            return [false, false];
-          case WORLD_IDS.WORLD_FOUR: // 4
-            return [false, false];
-          default:
-            return [false, false];
-        }
-    }
+  function getInitialRuleStates() {
+    return Array(setInfo.rules.length).fill(false);
   }
 
-  // 2) Min words required
-  function getMinWordsRequired(wNum) {
-    if (wNum < 0) {
-      // tutorial
-      if (wNum === WORLD_IDS.TUTORIAL_FOUR) {
-        return 2; // tutorial set 4 => min 2 words
-      } else {
-        return 1; // sets -1, -2, -3 => min 1 word
-      }
-    } else {
-      // main worlds
-      return 2;
-    }
+  // 2) Min words required comes directly from set info
+  function getMinWordsRequired() {
+    return setInfo.minWordsRequired;
   }
 
   // Split text tokens ignoring punctuation
@@ -137,8 +111,8 @@ export default function Level({
 
   // On mount or changes
   useEffect(() => {
-    setLastAccessedLevel(worldNumber, levelNumber);
-    const levelData = loadLevelData(worldNumber, levelNumber) || {};
+    setLastAccessedLevel(worldId, setId, levelNum);
+    const levelData = loadLevelData(worldId, setId, levelNum) || {};
 
     // Validate selected words
     const validSelectedWords = (levelData.selectedWords || []).filter(
@@ -147,16 +121,12 @@ export default function Level({
     setSelectedWords(validSelectedWords);
 
     // Initialize or load rule states
-    const initialRules = getInitialRuleStates(worldNumber);
+    const initialRules = getInitialRuleStates();
     const savedRuleStates = levelData.ruleStates || initialRules;
 
     if (savedRuleStates.length !== initialRules.length) {
-      /*console.warn(
-        `Mismatch ruleStates length for worldNumber=${worldNumber}. Resetting.`
-      );
-      */
       setRuleStates(initialRules);
-      saveLevelData(worldNumber, levelNumber, {
+      saveLevelData(worldId, setId, levelNum, {
         ...levelData,
         ruleStates: initialRules,
       });
@@ -164,39 +134,39 @@ export default function Level({
       setRuleStates(savedRuleStates);
     }
     setCompleted(levelData.completed || false);
-  }, [worldNumber, levelNumber, words.length]);
+  }, [worldId, setId, levelNum, words.length]);
 
-  // For color theming, if negative => use red variants
+  // For color theming
   const colorDark =
-    worldNumber < 0
+    worldId === 0 // Tutorial world
       ? "var(--redDark)"
-      : worldNumber === WORLD_IDS.WORLD_TWO
+      : worldId === 2
       ? "var(--blueDark)"
-      : worldNumber === WORLD_IDS.WORLD_THREE
+      : worldId === 3
       ? "var(--greenDark)"
-      : worldNumber === WORLD_IDS.WORLD_FOUR
+      : worldId === 4
       ? "var(--grayDark)"
       : "var(--purpleDark)";
 
   const colorLight =
-    worldNumber < 0
+    worldId === 0 // Tutorial world
       ? "var(--redLight)"
-      : worldNumber === WORLD_IDS.WORLD_TWO
+      : worldId === 2
       ? "var(--blueLight)"
-      : worldNumber === WORLD_IDS.WORLD_THREE
+      : worldId === 3
       ? "var(--greenLight)"
-      : worldNumber === WORLD_IDS.WORLD_FOUR
+      : worldId === 4
       ? "var(--grayLight)"
       : "var(--purpleLight)";
 
   const colorSelect =
-    worldNumber < 0
+    worldId === 0 // Tutorial world
       ? "var(--redSelect)"
-      : worldNumber === WORLD_IDS.WORLD_TWO
+      : worldId === 2
       ? "var(--blueSelect)"
-      : worldNumber === WORLD_IDS.WORLD_THREE
+      : worldId === 3
       ? "var(--greenSelect)"
-      : worldNumber === WORLD_IDS.WORLD_FOUR
+      : worldId === 4
       ? "var(--graySelect)"
       : "var(--purpleSelect)";
 
@@ -214,9 +184,9 @@ export default function Level({
       if (changes.completed !== undefined) {
         newData.completed = changes.completed;
       }
-      saveLevelData(worldNumber, levelNumber, newData);
+      saveLevelData(worldId, setId, levelNum, newData);
     },
-    [worldNumber, levelNumber]
+    [worldId, setId, levelNum]
   );
 
   // Volume helper
@@ -237,8 +207,7 @@ export default function Level({
       .map((i) => words[i])
       .filter((w) => typeof w === "string" && w.length > 0);
 
-    const allWords = extractWords(text);
-    const ruleResults = checkWorldRules(worldNumber, chosenWords, allWords);
+    const ruleResults = checkWorldRules(worldId, setId, chosenWords);
     const totalRules = ruleResults.filter(Boolean).length;
 
     // If soundLevel is "off", skip audio playback entirely.
@@ -298,7 +267,8 @@ export default function Level({
     ruleStates,
     isLastLevel,
     soundLevel,
-    worldNumber,
+    worldId,
+    setId,
     words,
     text,
     updateLevelData,
@@ -320,103 +290,13 @@ export default function Level({
     dispatchEventCompat("progressUpdate");
   };
 
-  // Determine hint words
-  let hintWords = [];
-  if (worldNumber === WORLD_IDS.TUTORIAL_ONE) {
-    if (levelNumber === 1) {
-      hintWords = [hintWordsTutorialSetOne[0]];
-    } else if (levelNumber === 2) {
-      hintWords = [hintWordsTutorialSetOne[1]];
-    } else if (levelNumber === 3) {
-      hintWords = [hintWordsTutorialSetOne[2]];
-    } else if (levelNumber === 4) {
-      hintWords = [hintWordsTutorialSetOne[3]];
-    } else if (levelNumber === 5) {
-      hintWords = [hintWordsTutorialSetOne[4]];
-    }
-  } else if (worldNumber === WORLD_IDS.TUTORIAL_TWO) {
-    if (levelNumber === 1) {
-      hintWords = [hintWordsTutorialSetTwo[0]];
-    } else if (levelNumber === 2) {
-      hintWords = [hintWordsTutorialSetTwo[1]];
-    } else if (levelNumber === 3) {
-      hintWords = [hintWordsTutorialSetTwo[2]];
-    } else if (levelNumber === 4) {
-      hintWords = [hintWordsTutorialSetTwo[3]];
-    }
-  } else if (worldNumber === WORLD_IDS.TUTORIAL_THREE) {
-    if (levelNumber === 1) {
-      hintWords = [hintWordsTutorialSetThree[0]];
-    } else if (levelNumber === 2) {
-      hintWords = [hintWordsTutorialSetThree[1]];
-    } else if (levelNumber === 3) {
-      hintWords = [hintWordsTutorialSetThree[2]];
-    }
-  } else if (worldNumber === WORLD_IDS.TUTORIAL_FOUR) {
-    if (levelNumber === 1) {
-      hintWords = hintWordsTutorialSetFour.slice(0, 2);
-    } else if (levelNumber === 2) {
-      hintWords = hintWordsTutorialSetFour.slice(2, 4);
-    } else if (levelNumber === 3) {
-      hintWords = hintWordsTutorialSetFour.slice(4);
-    }
-  } else if (worldNumber === WORLD_IDS.WORLD_ONE) {
-    switch (levelNumber) {
-      case 1:
-        hintWords = hintWordsWorldOne.slice(0, 2);
-        break;
-      case 2:
-        hintWords = hintWordsWorldOne.slice(2, 4);
-        break;
-      case 3:
-        hintWords = hintWordsWorldOne.slice(4, 6);
-        break;
-      default:
-        hintWords = [];
-    }
-  } else if (worldNumber === WORLD_IDS.WORLD_TWO) {
-    switch (levelNumber) {
-      case 1:
-        hintWords = hintWordsWorldTwo.slice(0, 2);
-        break;
-      case 2:
-        hintWords = hintWordsWorldTwo.slice(2, 4);
-        break;
-      case 3:
-        hintWords = hintWordsWorldTwo.slice(4, 6);
-        break;
-      default:
-        hintWords = [];
-    }
-  } else if (worldNumber === WORLD_IDS.WORLD_THREE) {
-    switch (levelNumber) {
-      case 1:
-        hintWords = hintWordsWorldThree.slice(0, 2);
-        break;
-      case 2:
-        hintWords = hintWordsWorldThree.slice(2, 4);
-        break;
-      case 3:
-        hintWords = hintWordsWorldThree.slice(4, 6);
-        break;
-      default:
-        hintWords = [];
-    }
-  } else if (worldNumber === WORLD_IDS.WORLD_FOUR) {
-    if (levelNumber === 1) {
-      hintWords = hintWordsWorldFour;
-    }
-  } else if (worldNumber === WORLD_IDS.WORLD_ONE_POINT_ONE) {
-    if (levelNumber === 1) {
-      hintWords = hintWordsWorldOnePointOne.slice(0, 2);
-    } else if (levelNumber === 2) {
-      hintWords = hintWordsWorldOnePointOne.slice(2, 4);
-    }
-  }
+  // For hint words, use levelNum - 1 directly as the index
+  const levelSet = getLevelSetData(worldId, setId);
+  const hintWords = levelSet?.hintWords?.[levelNum - 1]?.flat() || [];
 
   // Mapping between tokens and word indices
   let currentWordIndex = 0;
-  const minWordsRequired = getMinWordsRequired(worldNumber);
+  const minWordsRequired = getMinWordsRequired();
   const isSubmitEnabled = selectedWords.length >= minWordsRequired;
 
   const handleGoBack = () => {
@@ -451,13 +331,12 @@ export default function Level({
         "--level-color-select": colorSelect,
       }}
     >
-      {/* TopBar container in a .level-topbar area */}
       <TopBar
         goBack={handleGoBack}
         soundLevel={soundLevel}
         setSoundLevel={setSoundLevel}
         colorDark={colorDark}
-        hideStars={worldNumber < 0}
+        displayId={displayId} // Pass the full display ID to show in top bar
       />
 
       {/* Main content */}
@@ -465,13 +344,13 @@ export default function Level({
         <Box>
           <Triangle
             className="nav-icon"
-            onClick={levelNumber > 1 ? onPrev : undefined}
+            onClick={levelNum > 1 ? onPrev : undefined}
             style={{
-              cursor: levelNumber > 1 ? "pointer" : "default",
+              cursor: levelNum > 1 ? "pointer" : "default",
               fill: "var(--level-color-dark)",
               stroke: "var(--level-color-dark)",
-              opacity: levelNumber > 1 ? 1 : 0,
-              pointerEvents: levelNumber > 1 ? "auto" : "none",
+              opacity: levelNum > 1 ? 1 : 0,
+              pointerEvents: levelNum > 1 ? "auto" : "none",
             }}
           />
         </Box>
@@ -488,7 +367,9 @@ export default function Level({
             }
 
             const isHint = word
-              ? hintWords.includes(word.toLowerCase())
+              ? hintWords.some(
+                  (hint) => hint.toLowerCase() === word.toLowerCase()
+                )
               : false;
 
             const classes = ["word"];
@@ -525,7 +406,7 @@ export default function Level({
               }}
             />
           )}
-          {isLastLevel && levelNumber === totalLevels && (
+          {isLastLevel && levelNum === totalLevels && (
             <Star
               className="nav-icon"
               style={{
@@ -605,14 +486,13 @@ export default function Level({
 }
 
 Level.propTypes = {
+  displayId: PropTypes.string.isRequired,
   text: PropTypes.string.isRequired,
-  levelNumber: PropTypes.number.isRequired,
   totalLevels: PropTypes.number.isRequired,
   onNext: PropTypes.func.isRequired,
   onPrev: PropTypes.func.isRequired,
   isLastLevel: PropTypes.bool.isRequired,
   goBack: PropTypes.func.isRequired,
-  worldNumber: PropTypes.number.isRequired,
   soundLevel: PropTypes.string.isRequired,
   setSoundLevel: PropTypes.func.isRequired,
 };

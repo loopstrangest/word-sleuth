@@ -3,38 +3,64 @@ import { checkTutorialSetTwoRules } from "./tutorialSetTwoRules";
 import { checkTutorialSetThreeRules } from "./tutorialSetThreeRules";
 import { checkTutorialSetFourRules } from "./tutorialSetFourRules";
 import { checkWorldOnePointOneRules } from "./worldOnePointOneRules";
+import { checkWorldOnePointTwoRules } from "./worldOnePointTwoRules";
+import { checkWorldOnePointThreeRules } from "./worldOnePointThreeRules";
 
-// Tutorial sets: -4 to -1
+// World IDs for easy reference
 export const WORLD_IDS = {
-  TUTORIAL_ONE: -1,
-  TUTORIAL_TWO: -2,
-  TUTORIAL_THREE: -3,
-  TUTORIAL_FOUR: -4,
   WORLD_ONE_POINT_ONE: 1.1,
+  WORLD_ONE_POINT_TWO: 1.2,
+  WORLD_ONE_POINT_THREE: 1.3,
 };
 
 /**
- * Check the rules for a given tutorial set number.
- * @param {number} worldNumber The negative world ID (-1 to -4)
- * @param {string[]} selectedWords The player's selected words
+ * Check the rules for a given world and level.
+ * @param {number} worldId - The world ID (e.g., 0 for tutorial)
+ * @param {number} setId - The set ID within the world (e.g., 1 for first set)
+ * @param {string[]} selectedWords - The player's selected words
  * @returns {boolean[]} Array representing the status of each rule
  */
-export function checkWorldRules(worldNumber, selectedWords) {
-  switch (worldNumber) {
-    case WORLD_IDS.TUTORIAL_ONE:
-      return checkTutorialSetOneRules(selectedWords);
-    case WORLD_IDS.TUTORIAL_TWO:
-      return checkTutorialSetTwoRules(selectedWords);
-    case WORLD_IDS.TUTORIAL_THREE:
-      return checkTutorialSetThreeRules(selectedWords);
-    case WORLD_IDS.TUTORIAL_FOUR:
-      return checkTutorialSetFourRules(selectedWords);
-    case WORLD_IDS.WORLD_ONE_POINT_ONE:
-      return checkWorldOnePointOneRules(selectedWords);
-    default:
-      console.warn(`No rule logic found for worldNumber=${worldNumber}`);
-      return [false];
+export function checkWorldRules(worldId, setId, selectedWords) {
+  // Ensure selectedWords is an array of strings
+  if (!Array.isArray(selectedWords)) {
+    console.error("selectedWords must be an array");
+    return [false];
   }
+
+  // Tutorial world (0)
+  if (worldId === 0) {
+    switch (setId) {
+      case 1:
+        return checkTutorialSetOneRules(selectedWords);
+      case 2:
+        return checkTutorialSetTwoRules(selectedWords);
+      case 3:
+        return checkTutorialSetThreeRules(selectedWords);
+      case 4:
+        return checkTutorialSetFourRules(selectedWords);
+      default:
+        console.warn(`No rule logic found for tutorial set ${setId}`);
+        return [false];
+    }
+  }
+
+  // Main worlds (1-9)
+  if (worldId === 1) {
+    switch (setId) {
+      case 1:
+        return checkWorldOnePointOneRules(selectedWords);
+      case 2:
+        return checkWorldOnePointTwoRules(selectedWords);
+      case 3:
+        return checkWorldOnePointThreeRules(selectedWords);
+      default:
+        console.warn(`No rule logic found for World ${worldId} set ${setId}`);
+        return [false];
+    }
+  }
+
+  console.warn(`No rule logic found for worldId=${worldId}`);
+  return [false];
 }
 
 /**
